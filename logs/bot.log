@@ -1,0 +1,22 @@
+{"asctime": "2025-04-19 16:50:28,189", "levelname": "ERROR", "name": "bot", "message": "Handled exception in User", "exc_info": "Traceback (most recent call last):\n  File \"C:\\Users\\Dmitriy\\Desktop\\Bless-bot\\modules\\users\\User.py\", line 91, in set_photo\n    photo = message.photo[-1]\n            ~~~~~~~~~~~~~^^^^\nTypeError: 'NoneType' object is not subscriptable", "exception": "User didnt send photo", "user_id": 1045393239, "user_name": "Mandarinchik2315"}
+{"asctime": "2025-04-19 16:53:57,186", "levelname": "ERROR", "name": "bot", "message": "Test error logging", "dsdas": "dssdfsdf"}
+{"asctime": "2025-04-19 16:55:26,955", "levelname": "ERROR", "name": "bot", "message": "This is a test error log"}
+{"asctime": "2025-04-19 16:56:51,582", "levelname": "ERROR", "name": "bot", "message": "Test error logging", "dsdas": "dssdfsdf"}
+{"asctime": "2025-04-19 16:57:23,721", "levelname": "ERROR", "name": "bot", "message": "Test error logging", "dsdas": "dssdfsdf"}
+{"asctime": "2025-04-19 16:57:23,721", "levelname": "ERROR", "name": "bot", "message": "Handled exception in User", "exc_info": "Traceback (most recent call last):\n  File \"C:\\Users\\Dmitriy\\Desktop\\Bless-bot\\modules\\users\\User.py\", line 91, in set_photo\n    photo = message.photo[-1]\n            ~~~~~~~~~~~~~^^^^\nTypeError: 'NoneType' object is not subscriptable", "exception": "User didnt send photo", "user_id": 1045393239, "user_name": "Mandarinchik2315"}
+{"asctime": "2025-04-19 17:04:50,345", "levelname": "ERROR", "name": "bot", "message": "Test error logging", "dsdas": "dssdfsdf"}
+{"asctime": "2025-04-19 17:04:50,345", "levelname": "ERROR", "name": "bot", "message": "Handled exception in User", "exc_info": "Traceback (most recent call last):\n  File \"C:\\Users\\Dmitriy\\Desktop\\Bless-bot\\modules\\users\\User.py\", line 91, in set_photo\n    photo = message.photo[-1]\n            ~~~~~~~~~~~~~^^^^\nTypeError: 'NoneType' object is not subscriptable", "exception": "User didnt send photo", "user_id": 1045393239, "user_name": "Mandarinchik2315"}
+Test error logging
+Handled exception in User
+Traceback (most recent call last):
+  File "C:\Users\Dmitriy\Desktop\Bless-bot\modules\users\User.py", line 91, in set_photo
+    photo = message.photo[-1]
+            ~~~~~~~~~~~~~^^^^
+TypeError: 'NoneType' object is not subscriptable
+Test error logging
+Handled exception in User
+Traceback (most recent call last):
+  File "C:\Users\Dmitriy\Desktop\Bless-bot\modules\users\User.py", line 91, in set_photo
+    photo = message.photo[-1]
+            ~~~~~~~~~~~~~^^^^
+TypeError: 'NoneType' object is not subscriptable
