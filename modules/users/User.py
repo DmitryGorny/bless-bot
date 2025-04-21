@@ -48,7 +48,6 @@ class User(IUser):
             welcome = "Начало"
         await message.answer(welcome, reply_markup=self.create_buttons())
         self._user_link = f"https://t.me/{message.from_user.username}"
-        self.get_postions()
 
     def create_buttons(self):
         kb = ReplyKeyboardMarkup(keyboard=[
@@ -60,10 +59,15 @@ class User(IUser):
          self._orderBuilder.order = Order()
          await message.answer("Последовательно отвечайте на вопросы")
          await state.set_state(MakeOrder.order)
-         await message.answer(self._positions[0])
+
+         with open("res/postions.json", 'r', encoding='utf-8') as file:
+            dataF = json.load(file)
+
+
+            await message.answer(dataF["positions"][0])
 
          await state.update_data(
-            fields=self._positions,
+            fields=dataF["positions"],
             current_step=0,
             answers={}
          )
@@ -77,7 +81,6 @@ class User(IUser):
         data["answers"][current_field] = message.text
         self._orderBuilder.add_position(message.text)
         if current_step + 1 < len(fields):
-
             await state.update_data(
                 current_step=current_step + 1,
                 answers=data["answers"]
