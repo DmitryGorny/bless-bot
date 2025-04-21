@@ -28,6 +28,7 @@ class User(IUser):
         self._user_link = None
 
     def get_postions(self):
+       self._positions = []
        with open("res/postions.json", 'r', encoding='utf-8') as file:
             dataF = json.load(file)
             for i in dataF["positions"]:
