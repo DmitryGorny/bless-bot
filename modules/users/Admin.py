@@ -97,7 +97,7 @@ class Admin(IUser):
             #[InlineKeyboardButton(text="Отменить", callback_data="stop_welcome")]
         #])
 
-        await message.answer(f"Ваше нынешнее приветсвие:\n{welcome}\n--------------------\nВведите новое приветствие:", reply_markup=inline_kb)
+        await message.answer(f"Ваше нынешнее приветсвие:\n{welcome}\n--------------------\nВведите новое приветствие:")
 
     async def write_welcome(self, message: Message, state: FSMContext):
         await state.update_data(welcome=message.text)

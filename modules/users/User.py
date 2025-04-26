@@ -5,7 +5,7 @@ from .Admin import IUser
 import json
 from aiogram.filters import CommandStart
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.types.input_file import FSInputFile
 from aiogram.fsm.context import FSMContext
 from modules.order.Order import OrderBuilder, Order
@@ -26,8 +26,7 @@ class User(IUser):
         self._user_link = None
 
         self.__commands = { #сюда записывать только комнады, fsm проверять в handle
-            "/start": self.start,
-            "Сделать заказ": self.start_input_process
+            "Сделать заказ": self.start_input_process #переписать все к хуям
         }
 
     def get_postions(self):
@@ -122,8 +121,12 @@ class User(IUser):
         self._orderBuilder.add_photo(file_path)
         await self._bot.download_file(file_info.file_path, destination=file_path)
 
+        inline_kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Связаться с менеджером", url="https://t.me/blesssmanager")]
+        ])
+
         await message.answer("Фото получено и сохранено!")
-        await message.answer("Заказ был отправлен менеджеру, ожидайте ответа. Спасибо!")
+        await message.answer("Заказ был отправлен менеджеру, ожидайте ответа. Спасибо!", reply_markup=inline_kb)
         await state.clear()
 
         await self.send_order()
