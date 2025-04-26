@@ -18,11 +18,11 @@ class Positions(StatesGroup):
 
 class IUser(ABC):
     @abstractmethod
-    def _register_handlers(self) -> None:
+    async def handle(self, message: Message, state: FSMContext) -> None:
         pass
 
     @abstractmethod
-    async def start(self, message:Message) -> None:
+    async def start(self, message: Message) -> None:
         pass
 
     @abstractmethod
@@ -42,26 +42,37 @@ class IUser(ABC):
         pass
 
 class Admin(IUser):
-    def __init__(self, dp:Dispatcher):
-        self._dp = dp
-        self._register_handlers()
+
+    async def handle(self, message: Message, state: FSMContext):
+        if message.text == "/start":
+            await self.start(message)
+            return
+        elif message.text == "Просмотреть анкету":
+            await self.get_postions(message)
+            return
+        elif message.text == "Добавить вопрос":
+            await self.add_position(message, state)
+            return
+        elif message.text == "Ввести вопросы заново":
+            await self.add_postions(message, state)
+            return
+        elif message.text == "Изменить текст приветствия":
+            await self.create_welcome(message, state)
+            return
+
+        current_state = await state.get_state()
+        if current_state == Positions.single_position:
+            await self.singe_postion_added(message, state)
+        elif current_state == Positions.number_of_postions:
+            await self.start_input_process(message, state)
+        elif current_state == Positions.postions:
+            await self.process_input(message, state)
+        elif current_state == Positions.welcome_text:
+            await self.write_welcome(message, state)
 
     def _register_handlers(self):
-        self._dp.message.register(self.start, Command("dsfdsfdsds"))
-
-        self._dp.message.register(self.send_logs, F.text == "Скинуть файл с логами")
-
-        self._dp.message.register(self.add_position, F.text == "Добавить вопрос")
-        self._dp.message.register(self.singe_postion_added, Positions.single_position)
-
-        self._dp.message.register(self.add_postions, F.text == "Ввести вопросы заново")
-        self._dp.message.register(self.start_input_process, Positions.number_of_postions)
-        self._dp.message.register(self.process_input, Positions.postions)
-
-        self._dp.message.register(self.get_postions, F.text == "Просмотреть анкету")
-        self._dp.callback_query.register(self.start, lambda callback: callback.data == "stop_welcome")
-        self._dp.message.register(self.create_welcome, F.text == "Изменить текст приветствия")
-        self._dp.message.register(self.write_welcome, Positions.welcome_text)
+        #self._dp.callback_query.register(self.start, lambda callback: callback.data == "stop_welcome")
+        pass
 
 
     async def send_logs(self, message: Message):
@@ -82,15 +93,14 @@ class Admin(IUser):
             welcome = welcome.read()
         if len(welcome) == 0:
             welcome = "Начало"
-        inline_kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Отменить", callback_data="stop_welcome")]
-        ])
+        #inline_kb = InlineKeyboardMarkup(inline_keyboard=[
+            #[InlineKeyboardButton(text="Отменить", callback_data="stop_welcome")]
+        #])
 
         await message.answer(f"Ваше нынешнее приветсвие:\n{welcome}\n--------------------\nВведите новое приветствие:", reply_markup=inline_kb)
 
     async def write_welcome(self, message: Message, state: FSMContext):
         await state.update_data(welcome=message.text)
-        print(message.text)
         with open("res/welcome.conf", "w", encoding="utf-8") as welcome:
             try:
                 welcome.write(message.text)

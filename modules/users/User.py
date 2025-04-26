@@ -18,14 +18,17 @@ class MakeOrder(StatesGroup):
 
 
 class User(IUser):
-    def __init__(self, dp, bot, id):
-        self._dp = dp
-        self._register_handlers()
+    def __init__(self, bot, id):
         self._positions = []
         self._orderBuilder = OrderBuilder()
         self._bot = bot
         self.__admin_id = id
         self._user_link = None
+
+        self.__commands = { #сюда записывать только комнады, fsm проверять в handle
+            "/start": self.start,
+            "Сделать заказ": self.start_input_process
+        }
 
     def get_postions(self):
        self._positions = []
@@ -34,11 +37,21 @@ class User(IUser):
             for i in dataF["positions"]:
                 self._positions.append(i)
 
-    def _register_handlers(self):
-        self._dp.message.register(self.start, CommandStart())
-        self._dp.message.register(self.start_input_process, F.text == "Сделать заказ")
-        self._dp.message.register(self.process_input, MakeOrder.order)
-        self._dp.message.register(self.set_photo, MakeOrder.photo)
+    async def handle(self, message: Message, state: FSMContext):
+        if message.text == "/start":
+            await self.start(message)
+            return
+
+        if message.text not in self.__commands:
+            current_state = await state.get_state()
+            if current_state == MakeOrder.order.state:
+                await self.process_input(message, state)
+            elif current_state == MakeOrder.photo.state:
+                await self.set_photo(message, state)
+            else:
+                await message.answer("Неизвестная команда, используйте кнопки или /start")
+        else:
+            await self.__commands[message.text](message, state)
 
     async def start(self, message:Message):
         with open("res/welcome.conf", "r", encoding="utf-8") as file:
@@ -47,6 +60,7 @@ class User(IUser):
         if len(welcome) == 0:
             welcome = "Начало"
         await message.answer(welcome, reply_markup=self.create_buttons())
+        print(message.from_user.username)
         self._user_link = f"https://t.me/{message.from_user.username}"
 
     def create_buttons(self):
@@ -62,8 +76,6 @@ class User(IUser):
 
          with open("res/postions.json", 'r', encoding='utf-8') as file:
             dataF = json.load(file)
-
-
             await message.answer(dataF["positions"][0])
 
          await state.update_data(
@@ -73,6 +85,8 @@ class User(IUser):
          )
 
     async def process_input(self, message: Message, state: FSMContext):
+        if self._user_link is None:
+            self._user_link = f"https://t.me/{message.from_user.username}"
         data = await state.get_data()
         current_step = data["current_step"]
         fields = data["fields"]

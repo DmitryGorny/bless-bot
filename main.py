@@ -1,26 +1,26 @@
 import asyncio
 import json
 from aiogram import Bot, Dispatcher
+from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from aiogram.filters import CommandStart
 from modules.logger.logger_config import logger
-
+from modules.users.midleware import UserMidleware
+from modules.users.Admin import IUser
 from modules.fabric.UserFabric import UserId, CreateUser
 
-
+users = {}
 TOKEN = json.load(open("res/conf.json", "r"))["Token"]
 path = "res/conf.json"
 
 dp = Dispatcher()
 bot = Bot(token=TOKEN)
+dp.message.middleware(UserMidleware(path, bot, users))
 
 
-@dp.message(CommandStart())
-async def route_user(message: Message):
-    user_id = UserId(path, message.from_user.id)
-    user_fabric = CreateUser(user_id)
-    user = user_fabric.factory_method(dp=dp, bot=bot)
-    await user.start(message)
+@dp.message()
+async def universal_handler(message: Message, state: FSMContext, user: IUser):
+    await user.handle(message, state)
 
 
 async def main():

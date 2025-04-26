@@ -32,9 +32,8 @@ class CreateUser(Fabric):
         role = self.__UserId.get_id()
 
         if role[0] == "admin":
-            return Admin(kwargs.get("dp"))
+            return Admin()
         else:
-            dp = kwargs.get("dp")
             bot = kwargs.get("bot")
-            return User(dp, bot, role[1])
+            return User(bot, role[1])
 
